@@ -1,0 +1,74 @@
+{
+	"info": {
+		"_postman_id": "ba392a83-4c43-4894-94f4-99814739f5a2",
+		"name": "medods test task",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28255844"
+	},
+	"item": [
+		{
+			"name": "get-tokens",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Real-IP",
+						"value": "81.19.131.27",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:81/api/get-tokens/531000d8-521f-4f97-bb19-13fdd9f3a439/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "81",
+					"path": [
+						"api",
+						"get-tokens",
+						"531000d8-521f-4f97-bb19-13fdd9f3a439",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "refresh-tokens",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Real-IP",
+						"value": "81.19.131.27",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"access_token\": \"eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJyZWZyZXNoX3Rva2VuX2lkIjoiZWFkZDZlOTgtYjY5ZC00NmMzLWE0YWEtMjE3NzU0MTgzNWRhIiwidXNlcl9pZCI6IjUzMTAwMGQ4LTUyMWYtNGY5Ny1iYjE5LTEzZmRkOWYzYTQzOSIsInVzZXJfaXAiOiIxNzIuMTguMC4xIiwiZXhwIjoxNzM0ODc0MDM0LCJpYXQiOjE3MzQ4NzMxMzR9.8rwrtpkta_Tmpd1OHT_sHtQqpwtM6JFOreq61snSjZ6YCKwkd2VjBkUACtijoHcJaZqX1McbvWtVYQLQWFToFQ\",\r\n    \"refresh_token\": \"sXONhEJ0nPeAiT+fTQxp+zf85DkeuwQUO720a/FlWM8=\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:81/api/refresh/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "81",
+					"path": [
+						"api",
+						"refresh",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
