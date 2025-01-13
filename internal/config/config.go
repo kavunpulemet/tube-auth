@@ -7,13 +7,16 @@ import (
 )
 
 const (
-	serverPortEnv = "SERVER_PORT"
-	dbHostEnv     = "DB_HOST"
-	dbPortEnv     = "DB_PORT"
-	dbUserEnv     = "DB_USER"
-	dbNameEnv     = "DB_NAME"
-	dbPasswordEnv = "DB_PASSWORD"
-	dbSSLModeEnv  = "DB_SSLMODE"
+	serverPortEnv      = "SERVER_PORT"
+	dbHostEnv          = "DB_HOST"
+	dbPortEnv          = "DB_PORT"
+	dbUserEnv          = "DB_USER"
+	dbNameEnv          = "DB_NAME"
+	dbPasswordEnv      = "DB_PASSWORD"
+	dbSSLModeEnv       = "DB_SSLMODE"
+	accessTokenTTLEnv  = "ACCESS_TOKEN_TTL"
+	refreshTokenTTLEnv = "REFRESH_TOKEN_TTL"
+	jwtSecretEnv       = "JWT_SECRET"
 )
 
 type Config struct {
@@ -25,13 +28,13 @@ type Config struct {
 }
 
 func NewConfig() (Config, error) {
-	accessTTLStr := os.Getenv("ACCESS_TOKEN_TTL")
+	accessTTLStr := os.Getenv(accessTokenTTLEnv)
 	accessTTL, err := time.ParseDuration(accessTTLStr)
 	if err != nil || accessTTL <= 0 {
 		return Config{}, fmt.Errorf("invalid ACCESS_TOKEN_TTL: %s", accessTTLStr)
 	}
 
-	refreshTTLStr := os.Getenv("REFRESH_TOKEN_TTL")
+	refreshTTLStr := os.Getenv(refreshTokenTTLEnv)
 	refreshTTL, err := time.ParseDuration(refreshTTLStr)
 	if err != nil || refreshTTL <= 0 {
 		return Config{}, fmt.Errorf("invalid REFRESH_TOKEN_TTL: %s", refreshTTLStr)
@@ -42,7 +45,7 @@ func NewConfig() (Config, error) {
 		DBConnectionString: fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
 			os.Getenv(dbHostEnv), os.Getenv(dbPortEnv), os.Getenv(dbUserEnv),
 			os.Getenv(dbNameEnv), os.Getenv(dbPasswordEnv), os.Getenv(dbSSLModeEnv)),
-		JWTSecret:       []byte(os.Getenv("JWT_SECRET")),
+		JWTSecret:       []byte(os.Getenv(jwtSecretEnv)),
 		AccessTokenTTL:  accessTTL,
 		RefreshTokenTTL: refreshTTL,
 	}, nil

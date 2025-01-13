@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -62,7 +63,7 @@ func (s *ImplAuthorizationService) Login(ctx utils.MyContext, input models.Login
 func (s *ImplAuthorizationService) RefreshTokens(ctx utils.MyContext, accessToken, refreshToken, userIP string) (models.TokenPair, error) {
 	claims, err := parseAccessToken(accessToken, s.jwtSecret)
 	if err != nil {
-		return models.TokenPair{}, errors.New("invalid access token")
+		return models.TokenPair{}, fmt.Errorf("invalid access token: %w", err)
 	}
 
 	refreshTokenID := claims.RefreshTokenID
@@ -153,15 +154,22 @@ func generateRefreshToken() (string, error) {
 func parseAccessToken(accessToken string, jwtSecret []byte) (*models.Claims, error) {
 	token, err := jwt.ParseWithClaims(accessToken, &models.Claims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errors.New("error parsing token")
+			return nil, errors.New("unexpected signing method")
 		}
 		return jwtSecret, nil
 	})
 	if err != nil {
-		return nil, errors.New("error parsing token")
+		if errors.Is(err, jwt.ErrTokenExpired) {
+			claims, ok := token.Claims.(*models.Claims)
+			if !ok {
+				return nil, errors.New("invalid token claims")
+			}
+			return claims, nil
+		}
+		return nil, errors.New("error parsing token: " + err.Error())
 	}
 
-	claims, ok := token.Claims.(*models.Claims)
+	claims, ok := token.Claims.(*models.Claims) // !
 	if !ok || !token.Valid {
 		return nil, errors.New("error parsing token")
 	}

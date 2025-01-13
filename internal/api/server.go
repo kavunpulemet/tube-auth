@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 
 	"auth/internal/api/handler"
@@ -27,7 +28,13 @@ type Server struct {
 func NewServer(ctx utils.MyContext, config config.Config) *Server {
 	router := mux.NewRouter()
 
-	wrappedRouter := middleware.RecoveryMiddleware(ctx, router)
+	allowedOrigins := handlers.AllowedOrigins([]string{"http://localhost:3000"})
+	allowedMethods := handlers.AllowedMethods([]string{"GET", "POST", "OPTIONS"})
+	allowedHeaders := handlers.AllowedHeaders([]string{"Content-Type", "Authorization"})
+
+	corsRouter := handlers.CORS(allowedOrigins, allowedMethods, allowedHeaders)(router)
+
+	recoveredRouter := middleware.RecoveryMiddleware(ctx, corsRouter)
 
 	return &Server{
 		httpServer: &http.Server{
@@ -35,7 +42,7 @@ func NewServer(ctx utils.MyContext, config config.Config) *Server {
 			MaxHeaderBytes: maxHeaderBytes,
 			ReadTimeout:    readTimeout,
 			WriteTimeout:   writeTimeout,
-			Handler:        wrappedRouter,
+			Handler:        recoveredRouter,
 		},
 		router: router,
 	}
